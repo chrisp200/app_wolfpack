@@ -6,10 +6,10 @@
         id        = "com.phonegap.helloworld"
         version   = "1.0.0">
 
-    <name>HelloWorld</name>
+    <name>Wolfpack</name>
 
     <description>
-        Hello World sample application that responds to the deviceready event.
+        Wolfpack is an GPS social application geared to bring ppl together.
     </description>
 
     <author href="http://phonegap.com" email="support@phonegap.com">
