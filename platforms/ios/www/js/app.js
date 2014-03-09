@@ -7,7 +7,7 @@ function jsonp_callback(data) {
 
 
 // Declare app level module which depends on filters, and services
-var myApp = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ajoslin.mobile-navigate','ngMobile'])
+var myApp = angular.module('myApp', ['myApp.filters','demo', 'myApp.services', 'myApp.directives','myApp.controllers','ajoslin.mobile-navigate','ngMobile','snap'])
     .config(function ($compileProvider){
         $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
     })
@@ -25,4 +25,52 @@ var myApp = angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.d
   }]).run(function(){
     console.log('helo fone gap')
     alert('ready')
+  })
+
+angular.module('demo', []);
+
+angular.module('demo').factory('logger', function() {
+  'use strict';
+  var exports = {};
+
+  var getConsole = function() {
+    return document.getElementById('console');
+  };
+
+  exports.info = function(msg) {
+    var p = document.createElement('p');
+    p.innerHTML = msg;
+    getConsole().appendChild(p);
+  };
+
+  return exports;
+});
+angular.module('myApp.controllers', [])
+
+  .controller('ExRemoteCtrl', function($scope, snapRemote, logger) {
+    'use strict';
+    snapRemote.getSnapper().then(function(snapper) {
+      snapper.on('open', function() {
+        logger.info('Opened!');
+      });
+
+      snapper.on('close', function() {
+        logger.info('Closed!');
+      });
+    });
+  })
+
+  .controller('ExOptionsCtrl', function($scope) {
+    'use strict';
+    $scope.snapOpts = {
+      disable: 'none'
+    };
+
+    $scope.disable = function(side) {
+      $scope.snapOpts.disable = side;
+    };
+
+    $scope.enable = function() {
+      $scope.snapOpts.disable = 'none';
+    };
   })
