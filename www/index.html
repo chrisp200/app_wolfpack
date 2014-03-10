@@ -24,23 +24,27 @@
         <!-- <mobile-view/> -->
 
         <snap-drawers>
-          <div snap-drawer>
+          <div snap-drawer id='left-drawer'>
+            <br>
             Left drawer stuff!
+            <div ui-view='left-sidebar'></div>
           </div>
 
-          <div snap-drawer="right">
+          <div snap-drawer="right" id='right-drawer'>
+            <br>
             Right drawer stuff!
+            <div ui-view='right-sidebar'></div>
           </div>
         </snap-drawers>
 
-        <snap-content>
+        <snap-content id='center-content'>
           <h1>Main content</h1>
           <button snap-toggle>Toggle Left</button>
           <button snap-toggle="right">Toggle Right</button>
+          <div ui-view='center-content'></div>
         </snap-content>
 
         <!-- Comment out the following 2 lines to test on the browser-->
-        <script type="text/javascript" src="cordova-2.7.0.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         
         <!-- In production use min versions -->
@@ -49,14 +53,17 @@
         <script src="lib/angular.js"></script>
         <script src="lib/angular-mobile.js"></script>
         <script src="lib/angular-snap.js"></script>
-
         <script src="lib/mobile-nav.js"></script>
+        <script src="lib/angular-ui-router.js"></script>
+
+
 
         <script src="js/app.js"></script>
-        <script src="js/services.js"></script>
-        <script src="js/controllers.js"></script>
-        <script src="js/filters.js"></script>
-        <script src="js/directives.js"></script>
+        <script src="js/resources/WolfFac.js"></script>
+        <!-- // <script src="js/services.js"></script> -->
+        <!-- // <script src="js/controllers.js"></script> -->
+        <!-- // <script src="js/filters.js"></script> -->
+        <!-- // <script src="js/directives.js"></script> -->
 
         <script type="text/javascript">
             app.initialize();

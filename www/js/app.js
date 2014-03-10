@@ -7,70 +7,77 @@ function jsonp_callback(data) {
 
 
 // Declare app level module which depends on filters, and services
-var myApp = angular.module('myApp', ['myApp.filters','demo', 'myApp.services', 'myApp.directives','myApp.controllers','ajoslin.mobile-navigate','ngMobile','snap'])
+var app_pack = angular.module('myApp', [
+        'ajoslin.mobile-navigate',
+        'ngMobile',
+        'snap',
+        'ui.router'
+    ])
     .config(function ($compileProvider){
         $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
     })
-    .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/', {templateUrl: 'partials/homeView.html', controller: 'HomeCtrl'});
-        $routeProvider.when('/view1', {templateUrl: 'partials/notificationView.html'});
-        $routeProvider.when('/view2', {templateUrl: 'partials/geolocationView.html'});
-        $routeProvider.when('/view3', {templateUrl: 'partials/accelerometerView.html'});
-        $routeProvider.when('/view4', {templateUrl: 'partials/deviceInfoView.html'});
-        $routeProvider.when('/view5', {templateUrl: 'partials/cameraView.html'});
-        $routeProvider.when('/view6', {templateUrl: 'partials/contactsView.html'});
-        $routeProvider.when('/view7', {templateUrl: 'partials/compassView.html'});
-        $routeProvider.when('/view8', {templateUrl: 'partials/hackerNewsView.html'});
-        $routeProvider.otherwise({redirectTo: '/'});
-  }]).run(function(){
-    console.log('helo fone gap')
-    alert('ready')
-  })
+    .config( function( $stateProvider,$urlRouterProvider,$httpProvider) {
 
-angular.module('demo', []);
 
-angular.module('demo').factory('logger', function() {
-  'use strict';
-  var exports = {};
+       console.log('configing app')
 
-  var getConsole = function() {
-    return document.getElementById('console');
-  };
+        // $httpProvider.defaults.headers.comm  on['X-CSRF-Token'] = angular.element('meta[name=csrf-token]').attr('content') ;
 
-  exports.info = function(msg) {
-    var p = document.createElement('p');
-    p.innerHTML = msg;
-    getConsole().appendChild(p);
-  };
+        //config routs
+        $stateProvider
+            .state('app',{
+                url:'/',
+                views:{
+                    'left-sidebar' : {
+                        template:"left panel ui view"
+                    } ,
+                    'right-sidebar' : {
+                        template:
+                            'right panel ui view',
+                        controller:function(){
+                            // include any of the requires that start with admin
+                            console.log('nav include - ' )
+                        }
+                    },
+                    'center-content' : {
+                        template:
+                            "<div ng-controller='wolfcntrl'>"+
+                                "<h1>Center panel ui view</h1>"+
+                                "<input ng-model='user.username'></input>"+
+                                "<input ng-model='user.password'></input>"+
+                                "<button ng-click='login()'>login</button>"+
+                                "<div>{{response}}</div>"+
+                            "</div>",
+                        controller: ''
+                    }
+                }
+            })
 
-  return exports;
-});
-angular.module('myApp.controllers', [])
 
-  .controller('ExRemoteCtrl', function($scope, snapRemote, logger) {
-    'use strict';
-    snapRemote.getSnapper().then(function(snapper) {
-      snapper.on('open', function() {
-        logger.info('Opened!');
-      });
+        $urlRouterProvider.otherwise("/");
+    })
+    .controller('wolfcntrl',function( $scope, WolfActions ){
+        console.log('woof woof');
+        
+        $scope.user = {};
 
-      snapper.on('close', function() {
-        logger.info('Closed!');
-      });
-    });
-  })
+        $scope.login = function(){
+            WolfActions.login($scope.user).then(function(r){
+                $scope.response = r.data;
+                // $httpProvider.defaults.headers.comm  on['X-CSRF-Token'] = r.data.session_id
+                
+                $scope.user_id = r.data.user_id;
+                $scope.getWolves();
+            });
+        };
 
-  .controller('ExOptionsCtrl', function($scope) {
-    'use strict';
-    $scope.snapOpts = {
-      disable: 'none'
-    };
+        $scope.getWolves = function(){
+            WolfActions.getYourWolves($scope.user_id )
+                .then(function(r){
+                    $scope.response = r;
+                });
+        }
 
-    $scope.disable = function(side) {
-      $scope.snapOpts.disable = side;
-    };
 
-    $scope.enable = function() {
-      $scope.snapOpts.disable = 'none';
-    };
-  })
+    })
+
